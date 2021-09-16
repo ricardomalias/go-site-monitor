@@ -1,13 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
-var URL = "https://forleven.com"
+const DelayMinutes int = 5
 
 func main() {
 	displayIntroduction()
@@ -32,13 +36,13 @@ func main() {
 }
 
 func displayIntroduction() {
-	name := "Abigobaldo"
-	version := 1.2
+	version, _ := ioutil.ReadFile("./version.txt")
 	banner, _ := ioutil.ReadFile("./logo.txt")
 
 	fmt.Println(string(banner))
-	fmt.Println("Run ", name, " Run!")
-	fmt.Println("This program is on version: ", version)
+	fmt.Println("Be welcome to site monitoring !")
+	fmt.Println("This program is on version:", string(version))
+	fmt.Println(" ")
 }
 
 func displayMenu() {
@@ -49,7 +53,7 @@ func displayMenu() {
 
 func readOption() int {
 	var option int
-	_, err := fmt.Scan(&option)
+	option, err := fmt.Scan(&option)
 	if err != nil {
 		return 0
 	}
@@ -57,18 +61,55 @@ func readOption() int {
 	return option
 }
 
-func startMonitor() *http.Response {
+func startMonitor() {
 	fmt.Println("Monitoring...")
-	response, err := http.Get(URL)
+
+	urls := readUrlFile()
+
+	for _, url := range urls {
+		response, err := http.Get(url)
+
+		if err != nil {
+			fmt.Println("error on monitoring", err)
+		}
+
+		if response.StatusCode == 200 {
+			fmt.Println("Site:", url, "is online")
+		} else {
+			fmt.Println("Site:", url, "is offline")
+		}
+
+		time.Sleep(time.Duration(DelayMinutes) * time.Second)
+		fmt.Println(" ")
+	}
+
+	fmt.Println(" ")
+}
+
+func readUrlFile() []string {
+	file, err := os.Open("./urls.txt")
+	var urls []string
+
 	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	reader := bufio.NewReader(file)
+	for {
+		line, err := reader.ReadString('\n')
+		line = strings.TrimSpace(line)
+
+		urls = append(urls, line)
+
+		if err == io.EOF {
+			break
+		}
+	}
+
+	closeErr := file.Close()
+	if closeErr != nil {
 		return nil
 	}
 
-	if response.StatusCode == 200 {
-		fmt.Println("Site:", URL, "is online")
-	} else {
-		fmt.Println("Site:", URL, "is offline")
-	}
-
-	return response
+	return urls
 }
