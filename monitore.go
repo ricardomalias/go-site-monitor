@@ -24,7 +24,7 @@ func main() {
 		case 1:
 			startMonitor()
 		case 2:
-			fmt.Println("Displaying logs")
+			printLog()
 		case 0:
 			fmt.Println("Exiting...")
 			os.Exit(0)
@@ -36,8 +36,8 @@ func main() {
 }
 
 func displayIntroduction() {
-	version, _ := ioutil.ReadFile("./version.txt")
-	banner, _ := ioutil.ReadFile("./logo.txt")
+	version, _ := ioutil.ReadFile("./resources/version.txt")
+	banner, _ := ioutil.ReadFile("./resources/logo.txt")
 
 	fmt.Println(string(banner))
 	fmt.Println("Be welcome to site monitoring !")
@@ -53,7 +53,7 @@ func displayMenu() {
 
 func readOption() int {
 	var option int
-	option, err := fmt.Scan(&option)
+	_, err := fmt.Scan(&option)
 	if err != nil {
 		return 0
 	}
@@ -79,6 +79,8 @@ func startMonitor() {
 			fmt.Println("Site:", url, "is offline")
 		}
 
+		registerLog(url, response.StatusCode == 200)
+
 		time.Sleep(time.Duration(DelayMinutes) * time.Second)
 		fmt.Println(" ")
 	}
@@ -87,7 +89,7 @@ func startMonitor() {
 }
 
 func readUrlFile() []string {
-	file, err := os.Open("./urls.txt")
+	file, err := os.Open("./resources/urls.txt")
 	var urls []string
 
 	if err != nil {
@@ -112,4 +114,39 @@ func readUrlFile() []string {
 	}
 
 	return urls
+}
+
+func registerLog(url string, status bool) {
+	file, err := os.OpenFile("./resources/log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	timeFormat := time.Now().Format("2006-01-02 15:04:05")
+	statusText := "online"
+	if status == false {
+		statusText = "offline"
+	}
+
+	_, err = file.WriteString(timeFormat + " - site: " + url + " is " + statusText + "\n")
+	if err != nil {
+		return
+	}
+
+	err = file.Close()
+	if err != nil {
+		return
+	}
+}
+
+func printLog() {
+	file, err := ioutil.ReadFile("./resources/log.txt")
+	if err != nil {
+		return
+	}
+
+	fmt.Println("Displaying logs below:")
+	fmt.Println(" ")
+	fmt.Println(string(file))
 }

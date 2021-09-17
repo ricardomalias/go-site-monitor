@@ -1,0 +1,17 @@
+Site: https://zoop.com.br is online
+Site: https://db1.com.br is online
+Site: https://random-status-code.herokuapp.com is online
+Site: https://forleven.com is online
+Site: https://zoop.com.br is online
+Site: https://db1.com.br is online
+Site: https://random-status-code.herokuapp.com is online
+Site: https://forleven.com is online
+Site: https://zoop.com.br is online
+2021-09-17 15:32:19 - site: https://forleven.com is online
+2021-09-17 15:32:24 - site: https://zoop.com.br is online
+2021-09-17 15:32:33 - site: https://db1.com.br is online
+2021-09-17 15:32:38 - site: https://random-status-code.herokuapp.com is online
+2021-09-17 15:45:04 - site: https://forleven.com is online
+2021-09-17 15:45:09 - site: https://zoop.com.br is online
+2021-09-17 15:45:17 - site: https://db1.com.br is online
+2021-09-17 15:45:23 - site: https://random-status-code.herokuapp.com is offline

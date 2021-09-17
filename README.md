@@ -1,3 +1,3 @@
-# go-test
+# go-site-monitoring
 
-A test code for golang only for study purpose
+A monitoring online/offline site written in Golang
